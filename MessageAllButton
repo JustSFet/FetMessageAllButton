@@ -1,0 +1,50 @@
+// ==UserScript==
+// @name         Message All Button
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       JustS
+// @match        https://fetlife.com/events/*/rsvps*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=tampermonkey.net
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Your code here...
+    const header = document.getElementsByClassName("mv1")[0];
+
+    const subject = document.createElement('input');
+    subject.id = 'messageAllSubject';
+    subject.placeholder = 'subject';
+
+    const body = document.createElement('input');
+    body.id = 'messageAllBody';
+    body.placeholder = 'body';
+
+    const button = document.createElement('button');
+    button.innerHTML = 'Message all';
+
+    button.onclick = function() {
+        const aTags = document.getElementsByTagName("a");
+        var completed = [];
+        for (var i=0, max=aTags.length; i < max; i++) {
+            var re = new RegExp("^https:\\/\\/fetlife.com\\/users\\/\\d*$");
+            if (re.test(aTags[i])) {
+                var split = aTags[i].href.split("/");
+                var userId = split[split.length - 1];
+
+                if (!completed.includes(userId)) {
+                    window.open("https://fetlife.com/conversations/new?with=" + userId + "&messageAllSubject=" + subject.value + "&messageAllBody=" + body.value);
+                    completed.push(userId);
+                }
+
+            }
+        }
+    }
+
+    header.appendChild(subject);
+    header.appendChild(body);
+    header.appendChild(button);
+})();
